@@ -1,0 +1,86 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adrian AI - Live</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #000; color: #fff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 380px; background-color: #1c1c1e; border-radius: 30px; padding: 20px; border: 1px solid #333; }
+        .header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .live-dot { color: #00ff88; font-size: 0.8rem; }
+        .signal-card { background: #2c2c2e; border-radius: 20px; padding: 20px; border-top: 2px solid #00ff88; }
+        .signal-type { font-size: 1.6rem; font-weight: 700; color: #00ff88; }
+        .price-display { font-size: 2.5rem; font-weight: bold; margin: 15px 0; transition: color 0.3s; }
+        .footer { margin-top: 20px; text-align: center; font-size: 0.7rem; color: #8e8e93; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>Adrian AI</h1>
+            <div class="live-dot">● Live Connection</div>
+        </div>
+        
+        <div class="signal-card">
+            <div class="signal-type" id="signal-type">LOADING...</div>
+            <div style="color: #aaa; font-size: 0.8rem; margin-top: 5px;">LIVE BTC/USDT</div>
+            
+            <div class="price-display" id="live-price">$0.00</div>
+            
+            <div style="font-size: 0.8rem; color: #aaa;">
+                Last updated: <span id="time-updated">Just now</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            This is a live data feed demonstration.
+        </div>
+    </div>
+
+    <script>
+        // This JavaScript fetches live Bitcoin data every 5 seconds
+        async function fetchLiveData() {
+            try {
+                // Free public API for live crypto prices
+                const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+                const data = await response.json();
+                
+                const price = parseFloat(data.price).toFixed(2);
+                const priceElement = document.getElementById('live-price');
+                const signalElement = document.getElementById('signal-type');
+                
+                // Update the price on the screen
+                priceElement.innerText = `$${price}`;
+                
+                // Fake a "signal" based on the last digit of the price just to show movement
+                if (price.slice(-1) % 2 === 0) {
+                    signalElement.innerText = "BUY SIGNAL";
+                    signalElement.style.color = "#00ff88"; // Green
+                    priceElement.style.color = "#00ff88";
+                } else {
+                    signalElement.innerText = "SELL SIGNAL";
+                    signalElement.style.color = "#ff4d4d"; // Red
+                    priceElement.style.color = "#ff4d4d";
+                }
+
+                // Update the time
+                const now = new Date();
+                document.getElementById('time-updated').innerText = now.toLocaleTimeString();
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Run it immediately when the page loads
+        fetchLiveData();
+        
+        // Then run it again every 5 seconds (5000 milliseconds)
+        setInterval(fetchLiveData, 5000);
+    </script>
+</body>
+</html>
